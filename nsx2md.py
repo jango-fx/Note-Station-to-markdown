@@ -206,9 +206,8 @@ for file in files_to_convert:
 
         print('Converting note "{}"'.format(note_title))
 
-        content = re.sub('<img class=[^>]*syno-notestation-image-object[^>]*src=[^>]*ref=',
-                         '<img src=', note_data.get('content', ''))
-
+        content = note_data.get('content', '')
+        content = re.sub(r'(?<=ref=")(.*?)(" class="syno-notestation-image-object" src=")(webman\/3rdparty\/NoteStation\/images\/transparent\.gif)(?=")', ''r'\g<1>\g<2>\g<1>''', content)
 
         Path(pandoc_input_file.name).write_text(content, 'utf-8')
         pandoc = subprocess.Popen(pandoc_args)
