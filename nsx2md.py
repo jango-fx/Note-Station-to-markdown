@@ -235,19 +235,20 @@ for file in files_to_convert:
 
                 if links_as_URI:
                     if absolute_links:
-                        link_path = Path(parent_notebook.media_path / name).as_uri()
+                        link_path = Path(parent_notebook.media_path / urllib.parse.quote(name.encode('utf8'), safe='')).as_uri()
                     else:
                         link_path = 'file://{}/{}'.format(urllib.request.pathname2url(media_dir_name),
-                                                          urllib.request.pathname2url(name))
+                                                          urllib.request.pathname2url(urllib.parse.quote(name.encode('utf8'), safe='')))
                 else:
                     if absolute_links:
-                        link_path = str(Path(parent_notebook.media_path / name))
+                        link_path = str(Path(parent_notebook.media_path / urllib.parse.quote(name.encode('utf8'), safe='')))
                     else:
-                        link_path = '{}/{}'.format(media_dir_name, name)
+                        link_path = '{}/{}'.format(media_dir_name, urllib.parse.quote(name.encode('utf8'), safe=''))
 
                 try:
                     Path(parent_notebook.media_path / name).write_bytes(nsx_file.read('file_' + md5))
                     attachment_link = '[{}]({})'.format(name, link_path)
+                    
                 except Exception:
                     if source:
                         attachment_link = '[{}]({})'.format(name, source)
