@@ -20,18 +20,19 @@ from pathlib import Path
 # You can adjust some setting here. Default is for QOwnNotes app.
 
 ## Select meta data options
-meta_data_in_yaml = False  # True a YAML front matter block will contain the following meta data items.  
+meta_style = 'frontmatter' #'yaml'
+# meta_data_in_yaml = True  # True a YAML front matter block will contain the following meta data items.  
                            # False any selected meta data options below will be in the md text
 insert_title = True  # True will add the title of the note as a field in the YAML block, False no title in block.
 insert_ctime = False  # True to insert note creation time in the YAML block, False to disable.
 insert_mtime = False  # True to insert note modification time in the YAML block, False to disable.
 tags = True  # True to insert list of tags, False to disable
 tag_prepend = ''  # string to prepend each tag in a tag list inside the note, default is empty
-tag_delimiter = ', '  # string to delimit tags, default is comma separated list
+tag_delimiter = '\n'  # string to delimit tags, default is comma separated list
 no_spaces_in_tags = False  # True to replace spaces in tag names with '_', False to keep spaces
 
 ## Select file link options
-links_as_URI = True  # True for file://link%20target style links, False for /link target style links
+links_as_URI = False  # True for file://link%20target style links, False for /link target style links
 absolute_links = False  # True for absolute links, False for relative links
 
 ## Select File/Attachments/Media options
@@ -83,6 +84,34 @@ def create_yaml_meta_block():
         yaml_block = '{}\nAttachments:  {}\n'.format(yaml_block, ', '.join(attachment_list))
     
     return yaml_block
+
+
+def create_frontmatter_meta_block():
+    frontmatter_block = '---\n'
+
+    if insert_title:
+        frontmatter_block = '{}title: "{}"\n'.format(frontmatter_block, note_title)
+
+    # if insert_ctime and note_ctime:
+        frontmatter_ctime = time.strftime('%Y-%m-%d %H:%M', time.localtime(note_ctime))
+        frontmatter_block = '{}created: {}\n'.format(frontmatter_block, frontmatter_ctime)
+
+    # if insert_mtime and note_mtime:
+        frontmatter_mtime = time.strftime('%Y-%m-%d %H:%M', time.localtime(note_mtime))
+        frontmatter_block = '{}updated: {}\n'.format(frontmatter_block, frontmatter_mtime)
+
+    if tags and note_data.get('tag', ''):
+        if no_spaces_in_tags:
+            note_data['tag'] = [tag.replace(' ', '_') for tag in note_data['tag']]
+        frontmatter_tag_list = tag_delimiter.join('  - '.join((tag_prepend, tag)) for tag in note_data['tag'])
+        frontmatter_block = '{}tags:\n{}\n'.format(frontmatter_block, frontmatter_tag_list)
+
+    if attachment_list:
+        frontmatter_block = '{}\nattachments:  [{}]\n'.format(frontmatter_block, ', '.join(attachment_list))
+
+    frontmatter_block = '{}---\n'.format(frontmatter_block)
+    
+    return frontmatter_block
 
 
 def create_text_meta_block():
@@ -270,8 +299,10 @@ for file in files_to_convert:
             content = '\n' + content
 
 
-        if meta_data_in_yaml:
+        if meta_style == 'yaml':
             content = '{}\n{}'.format(create_yaml_meta_block(), content)
+        elif meta_style == 'frontmatter':
+            content = '{}\n{}'.format(create_frontmatter_meta_block(), content)
         else:
             content = '{}\n{}'.format(create_text_meta_block(), content)
 
