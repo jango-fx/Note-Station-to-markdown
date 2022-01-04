@@ -18,9 +18,9 @@ from bs4 import BeautifulSoup
 
 
 # You can adjust some setting here. Default is for QOwnNotes app.
-
+raw_html = True # include raw HTML in Markdown?
 ## Select meta data options
-meta_style = 'frontmatter' #'yaml'
+meta_style = 'frontmatter'  # 'yaml', 'frontmatter' or none
 # meta_data_in_yaml = True  # True a YAML front matter block will contain the following meta data items.  
                            # False any selected meta data options below will be in the md text
 insert_title = True  # True will add the title of the note as a field in the YAML block, False no title in block.
@@ -155,21 +155,21 @@ try:
     print('Found pandoc ' + pandoc_ver)
 
     if distutils.version.LooseVersion(pandoc_ver) < distutils.version.LooseVersion('1.16'):
-        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables-raw_html',
+        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables'+('+' if raw_html else '-')+'raw_html',
                        '--no-wrap', '-o', pandoc_output_file.name, pandoc_input_file.name]
     elif distutils.version.LooseVersion(pandoc_ver) < distutils.version.LooseVersion('1.19'):
-        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables-raw_html',
+        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables'+('+' if raw_html else '-')+'raw_html',
                        '--wrap=none', '-o', pandoc_output_file.name, pandoc_input_file.name]
     elif distutils.version.LooseVersion(pandoc_ver) < distutils.version.LooseVersion('2.11.2'):
-        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables-raw_html',
+        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables'+('+' if raw_html else '-')+'raw_html',
                        '--wrap=none', '--atx-headers', '-o',
                        pandoc_output_file.name, pandoc_input_file.name]
     else:
-        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables-raw_html',
+        pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables'+('+' if raw_html else '-')+'raw_html',
                        '--wrap=none', '--markdown-headings=atx', '-o',
                        pandoc_output_file.name, pandoc_input_file.name]
 except Exception:
-    pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables-raw_html',
+    pandoc_args = ['pandoc', '-f', 'html', '-t', 'markdown_strict+pipe_tables'+('+' if raw_html else '-')+'raw_html',
                    '--wrap=none', '--markdown-headings=atx', '-o',
                    pandoc_output_file.name, pandoc_input_file.name]
 
