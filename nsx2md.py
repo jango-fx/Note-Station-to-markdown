@@ -13,8 +13,8 @@ import collections
 import urllib.request
 import distutils.version
 from urllib.parse import unquote
-
 from pathlib import Path
+from bs4 import BeautifulSoup
 
 
 # You can adjust some setting here. Default is for QOwnNotes app.
@@ -236,7 +236,17 @@ for file in files_to_convert:
         print('Converting note "{}"'.format(note_title))
 
         content = note_data.get('content', '')
-        content = re.sub(r'(?<=ref=")(.*?)(" class="syno-notestation-image-object" src=")(webman\/3rdparty\/NoteStation\/images\/transparent\.gif)(?=")', ''r'\g<1>\g<2>\g<1>''', content)
+
+        # replace Notestation placeholder images
+        soup = BeautifulSoup(content, 'html.parser')
+        attributes = {
+             'class': 'syno-notestation-image-object',
+             'src': 'webman/3rdparty/NoteStation/images/transparent.gif',
+             'ref': True
+            }
+        for img in soup.find_all("img",attributes):
+            img['src'] = img['ref']
+        content = str(soup)
 
         Path(pandoc_input_file.name).write_text(content, 'utf-8')
         pandoc = subprocess.Popen(pandoc_args)
