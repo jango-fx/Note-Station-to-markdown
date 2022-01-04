@@ -1,6 +1,6 @@
 > :warning: **changes from the original by Maboroshy:**  
 > 
-> I had issues exporting from NoteStation 2.2.1-553 to Joplin. I was missing images due to NoteStation exporting `<img>` tags with some placeholder `src` value, and the fact that the script disabled Pandoc's `raw_html` extension. 
+> I had issues exporting from NoteStation 2.2.1-553 to Joplin. I was missing images due to NoteStation exporting `<img>` tags with some placeholder `src` value, and the fact that the script disabled Pandoc's `raw_html` extension and Pandoc failed to convert certain image tags to markdown. 
 > 
 > I haven't extensively tested my version of the script, but due to `raw_html` being enabled the script rather keeps messy, raw HTML, than loosing data.
 
