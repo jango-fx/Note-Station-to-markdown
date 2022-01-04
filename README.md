@@ -1,3 +1,9 @@
+> :warning: **changes from the original by Maboroshy:**  
+> 
+> I had issues exporting from NoteStation 2.2.1-553 to Joplin missing images, due to NoteStation exporting `<img>` tags with some placeholder `src` value, and the fact that the script disabled Pandoc's `raw_html` extension. 
+> 
+> I haven't extensively tested my version of the script, but due to `raw_html` being enabled the script rather keeps messy, raw HTML, than loosing data.
+
 This script will convert notes from Synology Note Station to plain-text markdown notes.  
 The script is written in Python and should work on any desktop platform. It's tested on Linux, Windows 7, mac OS 10.15.
 
