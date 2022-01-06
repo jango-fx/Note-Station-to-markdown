@@ -26,6 +26,7 @@ meta_style = 'frontmatter'  # 'yaml', 'frontmatter' or none
 insert_title = True  # True will add the title of the note as a field in the YAML block, False no title in block.
 insert_ctime = False  # True to insert note creation time in the YAML block, False to disable.
 insert_mtime = False  # True to insert note modification time in the YAML block, False to disable.
+insert_attachment_list = False
 tags = True  # True to insert list of tags, False to disable
 tag_prepend = ''  # string to prepend each tag in a tag list inside the note, default is empty
 tag_delimiter = '\n'  # string to delimit tags, default is comma separated list
@@ -80,7 +81,7 @@ def create_yaml_meta_block():
 
     yaml_block = '{}---\n'.format(yaml_block)
     
-    if attachment_list:
+    if insert_attachment_list:
         yaml_block = '{}\nAttachments:  {}\n'.format(yaml_block, ', '.join(attachment_list))
     
     return yaml_block
@@ -125,7 +126,7 @@ def create_text_meta_block():
         text_ctime = time.strftime('%Y-%m-%d %H:%M', time.localtime(note_ctime))
         text_block = 'Created: {}  \n{}'.format(text_ctime, text_block)
         
-    if attachment_list:
+    if insert_attachment_list:
         text_block = 'Attachments: {}  \n{}'.format(', '.join(attachment_list), text_block)
         
     if note_data.get('tag', '') and tags:
@@ -306,10 +307,11 @@ for file in files_to_convert:
                 elif ref:
                     content = content.replace(ref, link_path)
                 else:
-                    attachment_list.append(attachment_link)
+                    if insert_attachment_list == False:
+                        insert_attachment_list = 'TMP_TRUE'
+                        print("          \t  adding attachment list")
 
-
-        if note_data.get('tag', '') or attachment_list or insert_title \
+        if note_data.get('tag', '') or insert_attachment_list or insert_title \
                 or insert_ctime or insert_mtime:
             content = '\n' + content
 
