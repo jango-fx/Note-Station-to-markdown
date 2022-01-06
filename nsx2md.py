@@ -116,10 +116,10 @@ def create_frontmatter_meta_block():
         frontmatter_tag_list = tag_delimiter.join('  - '.join((tag_prepend, tag)) for tag in note_data['tag'])
         frontmatter_block = '{}tags:\n{}\n'.format(frontmatter_block, frontmatter_tag_list)
 
-    if attachment_list:
-        frontmatter_block = '{}\nattachments:  [{}]\n'.format(frontmatter_block, ', '.join(attachment_list))
-
     frontmatter_block = '{}---\n'.format(frontmatter_block)
+
+    if insert_attachment_list:
+        frontmatter_block = '{}\n**Attachments:**  \n  - {}\n---\n'.format(frontmatter_block, '\n  - '.join(attachment_list))
 
     return frontmatter_block
 
