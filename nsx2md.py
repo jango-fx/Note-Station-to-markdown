@@ -45,6 +45,15 @@ creation_date_in_filename = False  # True to insert note creation time to the no
 
 Notebook = collections.namedtuple('Notebook', ['path', 'media_path'])
 
+def progressBar(v, l=20):
+  out = ""
+  for i in range(l):
+    if i < v*l:
+      out += "▮"
+    else:
+      out += "▯"
+  return out
+
 
 def sanitise_path_string(path_str):
     for char in (':', '/', '\\', '|'):
@@ -218,8 +227,10 @@ for file in files_to_convert:
 
     note_id_to_title_index = {}
     converted_note_ids = []
-
+    node_index = 0
     for note_id in config_data['note']:
+        node_index += 1
+        progress = node_index / len(config_data['note'])  
         note_data = json.loads(nsx_file.read(note_id).decode('utf-8'))
 
         note_title = note_data.get('title', 'Untitled').replace("'","\"")
@@ -234,8 +245,9 @@ for file in files_to_convert:
         except KeyError:
             continue
 
-        print('Converting note "{}"'.format(note_title))
-
+        print(progressBar(progress,10)+'\tConverting note "{}"'.format(note_title))
+        if insert_attachment_list == 'TMP_TRUE':
+            insert_attachment_list = False
         content = note_data.get('content', '')
 
         # replace Notestation placeholder images
