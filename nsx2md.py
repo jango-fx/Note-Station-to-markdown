@@ -91,7 +91,7 @@ def create_frontmatter_meta_block():
     frontmatter_block = '---\n'
 
     if insert_title:
-        frontmatter_block = '{}title: "{}"\n'.format(frontmatter_block, note_title)
+        frontmatter_block = '{}title: \'{}\'\n'.format(frontmatter_block, note_title)
 
     # if insert_ctime and note_ctime:
         frontmatter_ctime = time.strftime('%Y-%m-%d %H:%M', time.localtime(note_ctime))
@@ -222,7 +222,7 @@ for file in files_to_convert:
     for note_id in config_data['note']:
         note_data = json.loads(nsx_file.read(note_id).decode('utf-8'))
 
-        note_title = note_data.get('title', 'Untitled')
+        note_title = note_data.get('title', 'Untitled').replace("'","\"")
         note_ctime = note_data.get('ctime', '')
         note_mtime = note_data.get('mtime', '')
 
