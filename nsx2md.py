@@ -110,7 +110,7 @@ def create_frontmatter_meta_block():
         frontmatter_block = '{}\nattachments:  [{}]\n'.format(frontmatter_block, ', '.join(attachment_list))
 
     frontmatter_block = '{}---\n'.format(frontmatter_block)
-    
+
     return frontmatter_block
 
 
@@ -256,6 +256,7 @@ for file in files_to_convert:
 
         attachments_data = note_data.get('attachment')
         attachment_list = []
+        attachment_hashes = []
 
         if attachments_data:
             for attachment_id in note_data.get('attachment', ''):
@@ -285,8 +286,12 @@ for file in files_to_convert:
                         link_path = '{}/{}'.format(media_dir_name, urllib.parse.quote(name.encode('utf8'), safe=''))
 
                 try:
-                    Path(parent_notebook.media_path / name).write_bytes(nsx_file.read('file_' + md5))
-                    attachment_link = '[{}]({})'.format(name, link_path)
+                    if not md5 in attachment_hashes :
+                        attachment_hashes.append(md5)
+                        Path(parent_notebook.media_path / name).write_bytes(nsx_file.read('file_' + md5))
+                        attachment_link = '[{}]({})'.format(name, link_path)
+                        attachment_list.append(attachment_link)
+
                     
                 except Exception:
                     if source:
