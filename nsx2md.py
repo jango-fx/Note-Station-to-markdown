@@ -250,7 +250,7 @@ for file in files_to_convert:
             insert_attachment_list = False
         content = note_data.get('content', '')
 
-        # replace Notestation placeholder images
+        # replace Note Station placeholder images
         soup = BeautifulSoup(content, 'html.parser')
         attributes = {
              'class': 'syno-notestation-image-object',
@@ -259,6 +259,21 @@ for file in files_to_convert:
             }
         for img in soup.find_all("img",attributes):
             img['src'] = img['ref']
+        
+        attributes = {
+             'class': 'syno-notestation-image-object',
+             'src': '3rdparty/NoteStation/images/transparent.gif',
+             'ref': True
+            }
+        for img in soup.find_all("img",attributes):
+            img['src'] = img['ref']
+        
+        # clean img tags
+        REMOVE_ATTRIBUTES = ['class','adjust','border', 'ref']
+        for img in soup.find_all("img",True):
+            for attr in REMOVE_ATTRIBUTES:
+                del img[attr]
+
         content = str(soup)
 
         Path(pandoc_input_file.name).write_text(content, 'utf-8')
